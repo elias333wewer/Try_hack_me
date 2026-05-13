@@ -43,7 +43,7 @@ hydra -l lin -P locks.txt -t 4 ssh://Target_ip
 
 **Result:** 
 - Username: `lin`
-- Password: `RedDr4gonSynd1cat3`
+- Password: `███████████████████`
 
 ### SSH Access
 ```bash
@@ -56,7 +56,7 @@ Successfully logged in as user `lin`
 
 Located at: `/home/lin/Desktop/user.txt`
 
-**Flag:** `THM{CR1M3_SyNd1C4T3}`
+**Flag:** `███████████████████`
 
 ## Privilege Escalation
 
@@ -79,30 +79,13 @@ This command exploits tar's checkpoint feature to execute arbitrary commands as 
 
 Located at: `/root/root.txt`
 
-**Flag:** `THM{80UN7Y_h4cK3r}`
+**Flag:** `███████████████████`
 
 ## Key Findings
 
 1. **Task Writer:** lin (from task.txt signature)
 2. **Credentials Found:** Through FTP enumeration and SSH brute force
 3. **Privilege Escalation:** Misconfigured sudo permissions on `/bin/tar` allowed privilege escalation via checkpoint-action exploit
-
-## Answers
-
-1. **Who wrote the task?** 
-   - lin
-
-2. **What service can you bruteforce with the text file found?** 
-   - SSH
-
-3. **What is the users password?** 
-   - RedDr4gonSynd1cat3
-
-4. **user.txt:** 
-   - THM{CR1M3_SyNd1C4T3}
-
-5. **root.txt:** 
-   - THM{80UN7Y_h4cK3r}
 
 ## Key Learnings
 

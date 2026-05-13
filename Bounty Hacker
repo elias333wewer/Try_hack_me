@@ -1,1 +1,75 @@
+# Bounty Hacker - TryHackMe Writeup
 
+## Room Overview
+This room involves exploiting a vulnerable web application to find flags and complete objectives.
+
+## Reconnaissance
+
+### Nmap Scan
+```bash
+nmap -sV -p- <target_ip>
+```
+
+**Open Ports:**
+- Port 21: FTP
+- Port 22: SSH
+- Port 80: HTTP
+
+### FTP Enumeration
+Connected to FTP server anonymously:
+```bash
+ftp <target_ip>
+```
+
+**Findings:**
+- Found `task.txt` and `locks.txt` files
+- Downloaded files for analysis
+
+## Exploitation
+
+### FTP Credentials
+Found credentials from FTP enumeration.
+
+### SSH Access
+Logged in via SSH using discovered credentials:
+```bash
+ssh <username>@<target_ip>
+```
+
+### Flag 1
+Found in: `/home/<user>/`
+
+### Flag 2
+Found in: Root directory or specific location
+
+### Privilege Escalation
+Identified vulnerability for privilege escalation.
+
+## Answers
+
+1. **Who wrote the task?**
+   - Found in `task.txt`
+
+2. **What service can you bruteforce with the text file found?**
+   - Answer: SSH
+
+3. **What is the users password?**
+   - Found through analysis of `locks.txt`
+
+4. **user.txt**
+   - [Flag content here]
+
+5. **root.txt**
+   - [Flag content here]
+
+## Key Learnings
+- Importance of checking FTP for anonymous access
+- Credential discovery through file enumeration
+- SSH brute force attack methodology
+- Privilege escalation techniques
+
+## Tools Used
+- nmap
+- ftp
+- hydra (for brute forcing)
+- ssh

@@ -1,5 +1,7 @@
 # Bounty Hacker - TryHackMe Writeup
 
+**Room Link:** https://tryhackme.com/room/bountyhacker
+
 ## Room Overview
 This room involves exploiting a vulnerable web application through FTP enumeration, SSH brute forcing, and privilege escalation using a misconfigured sudo binary.
 
@@ -43,7 +45,7 @@ hydra -l lin -P locks.txt -t 4 ssh://Target_ip
 
 **Result:** 
 - Username: `lin`
-- Password: `███████████████████`
+- Password: [Redacted for security]
 
 ### SSH Access
 ```bash
@@ -56,7 +58,7 @@ Successfully logged in as user `lin`
 
 Located at: `/home/lin/Desktop/user.txt`
 
-**Flag:** `███████████████████`
+**Flag:** [Submit to TryHackMe]
 
 ## Privilege Escalation
 
@@ -79,7 +81,7 @@ This command exploits tar's checkpoint feature to execute arbitrary commands as 
 
 Located at: `/root/root.txt`
 
-**Flag:** `███████████████████`
+**Flag:** [Submit to TryHackMe]
 
 ## Key Findings
 

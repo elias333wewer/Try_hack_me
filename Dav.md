@@ -95,7 +95,7 @@ The shell is now accessible at: `http://MACHINE_IP/webdav/shell.php`
 ## Flags
 
 ### Flag 1: User Flag
-> ||THM{webdav_file_upload_rce}||
+> ||THM{this_is_fake_flag}||
 
 ### Flag 2: Root Flag  
 > ||THM{weak_webdav_credentials}||

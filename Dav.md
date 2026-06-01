@@ -36,10 +36,6 @@ PORT   STATE SERVICE VERSION
 
 Performed directory scanning with different wordlists:
 
-**First attempt** (apache-user-enum-2.0.txt):
-- No results
-
-**Second attempt** (dirb/big.txt):
 ```bash
 gobuster dir -u http://MACHINE_IP -w /usr/share/wordlists/dirb/big.txt
 ```
@@ -64,11 +60,8 @@ Used `cadaver` (WebDAV client) to connect to the service:
 cadaver http://MACHINE_IP/webdav/
 ```
 
-**Initial attempts:**
-- Username: `||USERNAME_1||` - Authentication failed
-
 **Successful login:**
-- Username: `||USERNAME_2||`
+- Username: `||USERNAME||`
 - Password: `||PASSWORD||`
 
 **Connected successfully to WebDAV:**
@@ -105,7 +98,7 @@ The shell is now accessible at: `http://MACHINE_IP/webdav/shell.php`
 ## Key Takeaways
 
 1. **WebDAV Misconfiguration**: Service exposed with insufficient access controls
-2. **Weak Credentials**: Default/typo credentials were accepted
+2. **Weak Credentials**: Credentials were accepted for access
 3. **File Upload Vulnerability**: WebDAV allowed uploading executable PHP files
 4. **Remote Code Execution**: Uploaded PHP shell provides shell access to the system
 5. **Importance of Enumeration**: Directory scanning revealed the vulnerable `/webdav` endpoint

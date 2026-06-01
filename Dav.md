@@ -3,7 +3,7 @@
 ## Machine Information
 - **Machine Name**: Dav
 - **Difficulty**: Easy
-- **IP Address**: 10.112.158.31
+- **IP Address**: ||MACHINE_IP||
 
 ---
 
@@ -13,7 +13,7 @@
 First, let's scan the target machine to identify open ports and services:
 
 ```bash
-nmap -sV -sC 10.112.158.31
+nmap -sV -sC MACHINE_IP
 ```
 
 **Results:**
@@ -21,7 +21,7 @@ nmap -sV -sC 10.112.158.31
   - Default Apache2 Ubuntu page
 
 ```
-Nmap scan report for 10.112.158.31
+Nmap scan report for MACHINE_IP
 Host is up (0.077s latency).
 Not shown: 999 closed tcp ports (reset)
 PORT   STATE SERVICE VERSION
@@ -39,7 +39,7 @@ Performed directory scanning with different wordlists:
 
 **Second attempt** (dirb/big.txt):
 ```bash
-gobuster dir -u http://10.112.158.31 -w /usr/share/wordlists/dirb/big.txt
+gobuster dir -u http://MACHINE_IP -w /usr/share/wordlists/dirb/big.txt
 ```
 
 **Discovered directories:**
@@ -59,7 +59,7 @@ The `/webdav` directory requires authentication. WebDAV (Web Distributed Authori
 Used `cadaver` (WebDAV client) to connect to the service:
 
 ```bash
-cadaver http://10.112.158.31/webdav/
+cadaver http://MACHINE_IP/webdav/
 ```
 
 **Initial attempts:**
@@ -86,17 +86,17 @@ Uploading shell.php to `/webdav/shell.php':
 Progress: [=============================>] 100.0% of 5494 bytes succeeded.
 ```
 
-The shell is now accessible at: `http://10.112.158.31/webdav/shell.php`
+The shell is now accessible at: `http://MACHINE_IP/webdav/shell.php`
 
 ---
 
 ## Flags
 
 ### Flag 1: User Flag
-> ||FLAG{webdav_is_not_secure}||
+> ||THM{webdav_file_upload_rce}||
 
 ### Flag 2: Root Flag  
-> ||FLAG{weak_credentials_everywhere}||
+> ||THM{weak_webdav_credentials}||
 
 ---
 

@@ -65,11 +65,11 @@ cadaver http://MACHINE_IP/webdav/
 ```
 
 **Initial attempts:**
-- Username: `xampp` - Authentication failed
+- Username: `||USERNAME_1||` - Authentication failed
 
 **Successful login:**
-- Username: `wampp` (typo variant)
-- Password: (default/empty)
+- Username: `||USERNAME_2||`
+- Password: `||PASSWORD||`
 
 **Connected successfully to WebDAV:**
 ```bash
@@ -95,17 +95,17 @@ The shell is now accessible at: `http://MACHINE_IP/webdav/shell.php`
 ## Flags
 
 ### Flag 1: User Flag
-> ||THM{this_is_fake_flag}||
+> ||THM{user_flag}||
 
 ### Flag 2: Root Flag  
-> ||THM{weak_webdav_credentials}||
+> ||THM{root_flag}||
 
 ---
 
 ## Key Takeaways
 
 1. **WebDAV Misconfiguration**: Service exposed with insufficient access controls
-2. **Weak Credentials**: Default/typo credentials (wampp vs xampp) were accepted
+2. **Weak Credentials**: Default/typo credentials were accepted
 3. **File Upload Vulnerability**: WebDAV allowed uploading executable PHP files
 4. **Remote Code Execution**: Uploaded PHP shell provides shell access to the system
 5. **Importance of Enumeration**: Directory scanning revealed the vulnerable `/webdav` endpoint

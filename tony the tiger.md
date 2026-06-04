@@ -1,5 +1,11 @@
 # Tony the Tiger - TryHackMe Writeup
 
+**Room:** [Tony the Tiger on TryHackMe](https://tryhackme.com/r/room/tony)
+
+**Platform:** [TryHackMe](https://tryhackme.com) - A free online platform for learning cybersecurity
+
+---
+
 ## Overview
 This room involves exploiting a Java deserialization vulnerability in a JBoss application server to gain remote code execution and escalate privileges to root.
 
@@ -209,7 +215,12 @@ Root Access (0:0)
 
 ## References
 
+- **TryHackMe:** https://tryhackme.com
 - JexBoss GitHub: https://github.com/joaomatosf/jexboss
 - CWE-502: Deserialization of Untrusted Data
 - CVE-2017-5645: JBoss RMI Registry Vulnerability
 - GTFOBins - find: https://gtfobins.github.io/gtfobins/find/
+
+---
+
+*This writeup was created as part of the TryHackMe learning platform experience. TryHackMe provides hands-on cybersecurity training through interactive rooms and challenges.*
